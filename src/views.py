@@ -11,33 +11,18 @@ from src.models import User, Contact, Organization
 
 
 @login_required
-def dashboard():
-    gateway = GooglePeopleGateway()
-    access_token = request.args.get('access_token')
-    accounts = gateway.get_contacts(access_token)
-
-    for account in accounts['connections']:
-        if account.get('organizations') is not None:
-            for organization in account['organizations']:
-                m_organization = Organization.query.filter_by(name=organization['name']).first()
-                if m_organization is None:
-                    m_organization = Organization(name=organization['name'])
-                if account.get('emailAddresses') is not None:
-                    for email in account.get('emailAddresses'):
-                        contact = Contact.query.filter_by(email=email['value']).first()
-                        if contact is None:
-                            contact = Contact(email=email['value'])
-                        m_organization.contacts.append(contact)
-                        db.session.add(contact)
-                db.session.add(m_organization)
-
-    db.session.add(current_user)
-    db.session.commit()
-    if current_user.is_authenticated:
-        data = {'accounts': [{'organization': o.name, "emails": [e.email for e in o.contacts]} for o in Organization.query.all()]}
-        return jsonify(data)
-    else:
-        return jsonify({"message": "faça login para acessar as funcionalidades."})
+def contacts():
+    data = {
+        'accounts': list(
+            map(lambda o: {
+                'organization': o.name,
+                "emails": list(map(lambda e: e.email, o.contacts))
+            },
+                Organization.query.all()
+                )
+        )
+    }
+    return jsonify(data)
 
 
 def login():
@@ -76,3 +61,40 @@ def login():
 def logout():
     logout_user()
     return jsonify({"message": "O usuário foi deslogado"})
+
+
+@login_required
+def refresh_contacts():
+    gateway = GooglePeopleGateway()
+    access_token = request.args.get('access_token')
+    accounts = gateway.get_contacts(access_token)
+
+    for account in accounts['connections']:
+        if account.get('organizations') is not None:
+            for organization in account['organizations']:
+                m_organization = Organization.query.filter_by(name=organization['name']).first()
+                if m_organization is None:
+                    m_organization = Organization(name=organization['name'])
+                if account.get('emailAddresses') is not None:
+                    for email in account.get('emailAddresses'):
+                        contact = Contact.query.filter_by(email=email['value']).first()
+                        if contact is None:
+                            contact = Contact(email=email['value'])
+                        m_organization.contacts.append(contact)
+                        db.session.add(contact)
+                db.session.add(m_organization)
+
+    db.session.add(current_user)
+    db.session.commit()
+
+    data = {
+        'accounts': list(
+            map(lambda o: {
+                'organization': o.name,
+                "emails": list(map(lambda e: e.email, o.contacts))
+            },
+                Organization.query.all()
+                )
+        )
+    }
+    return jsonify(data)
