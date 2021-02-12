@@ -2,6 +2,14 @@ runtime: python
 env: flex
 entrypoint: gunicorn -b :8080 app:app
 
+env_variables:
+  SECRET_KEY: "ZdVW08iQNhWOeZ_gu2zOoW-ig6vkhqJWBNMsX-Xygfk"
+  FLASK_APP: "app.py"
+  FLASK_DEBUG: "1"
+  GOOGLE_CLIENT_ID: "431116429217-14an4s5epc7hfvnfl09d09p03nc6pqd4.apps.googleusercontent.com"
+  GOOGLE_CLIENT_SECRET: "STUmqvlJ3C6s3esdawH6_IZI"
+  GOOGLE_CLIENT_API_KEY: "AIzaSyCmQ5THpadb55iZJGszhojuFzrnCJE9L2g"
+
 runtime_config:
   python_version: 3
 

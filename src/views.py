@@ -5,9 +5,13 @@ from flask_login import current_user, login_user, logout_user, login_required
 from google.auth.transport import requests
 from google.oauth2 import id_token
 
-from src.configs import db, GOOGLE_CLIENT_ID
+from src.configs import db, GOOGLE_CLIENT_ID, SECRET_KEY
 from src.gateway import GooglePeopleGateway
 from src.models import User, Contact, Organization
+
+
+def index():
+    return SECRET_KEY
 
 
 @login_required

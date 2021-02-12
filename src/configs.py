@@ -17,6 +17,6 @@ app.secret_key = SECRET_KEY
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:////{BASE_DIR}/database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JSON_AS_ASCII'] = False
-CORS(app)
+cors = CORS(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
