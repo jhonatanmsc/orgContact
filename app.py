@@ -18,3 +18,6 @@ app.add_url_rule('/contacts', 'contacts', contacts)
 app.add_url_rule('/login', 'login', login)
 app.add_url_rule('/logout', 'logout', logout)
 app.add_url_rule('/refresh-contacts', 'refresh_contacts', refresh_contacts)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", debug=True)

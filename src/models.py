@@ -13,6 +13,11 @@ organization_contacts = db.Table('organization_contacts',
                                  db.Column('contact_id', db.Integer, db.ForeignKey('contacts.id'), primary_key=True)
                                  )
 
+user_organizations = db.Table('user_organizations',
+                              db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+                              db.Column('organization_id', db.Integer, db.ForeignKey('organizations.id'), primary_key=True)
+                              )
+
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -26,6 +31,8 @@ class User(db.Model, UserMixin):
     locale = db.Column(db.String(10))
     contacts = db.relationship('Contact', secondary=user_contacts, lazy='subquery',
                                backref=db.backref('contact_users', lazy=True))
+    organizations = db.relationship('Organization', secondary=user_organizations, lazy='subquery',
+                               backref=db.backref('user_organizations', lazy=True))
 
     def __repr__(self):
         return f'<User {self.name}, email: {self.email}>'

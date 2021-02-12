@@ -18,7 +18,7 @@ def contacts():
                 'organization': o.name,
                 "emails": list(map(lambda e: e.email, o.contacts))
             },
-                Organization.query.all()
+                current_user.organizations
                 )
         )
     }
@@ -82,6 +82,7 @@ def refresh_contacts():
                             contact = Contact(email=email['value'])
                         m_organization.contacts.append(contact)
                         db.session.add(contact)
+                current_user.organizations.append(m_organization)
                 db.session.add(m_organization)
 
     db.session.add(current_user)
@@ -93,7 +94,7 @@ def refresh_contacts():
                 'organization': o.name,
                 "emails": list(map(lambda e: e.email, o.contacts))
             },
-                Organization.query.all()
+                current_user.organizations
                 )
         )
     }
